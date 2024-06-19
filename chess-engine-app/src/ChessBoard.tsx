@@ -21,8 +21,91 @@ const Chessboard: React.FC = () => {
 
     const [prevPosition, setPrevPosition] = useState<{ rowIndex: number, columnIndex: number } | null>(null);
 
+    const isLegalMove = (piece: string, rowIndex: number, columnIndex: number) => {
+        const targetSquare = board[columnIndex][rowIndex]
+        
+        //check if same color
+        if (targetSquare != null && targetSquare[0] === piece[0]) 
+            return false;
+
+        const prevRowIndex = prevPosition!.rowIndex;
+        const prevColumnIndex = prevPosition!.columnIndex;
+        const rowDiff = Math.abs(prevRowIndex - rowIndex);
+        const colDiff = Math.abs(prevColumnIndex - columnIndex);
+        if (piece[1] === 'k') {
+    
+            if (rowDiff <= 1 && colDiff <= 1) {
+                return true;
+            }
+            return false;
+        }
+        
+        //Queen
+        if (piece[1] === 'q') {
+            if (rowDiff === colDiff || rowDiff === 0 || colDiff === 0) {
+                return true;
+            }
+            
+        }
+        //Bishop
+        if (piece[1] === 'b') {
+            if (rowDiff === colDiff) {
+                return true;
+            }    
+        }
+
+        //Rook
+        if (piece[1] === 'r') {
+            if (rowDiff === 0 || colDiff === 0) {
+                return true;
+            }
+        }
+        //Knight
+        if (piece[1] === 'n') {
+            if ((rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2)) {
+                return true;
+            }
+        }
+        //Pawn
+        if (piece[1] === 'p') {
+            if (piece[0] === 'w') {
+                if (prevColumnIndex === 6 && columnIndex === 4 && rowIndex === prevRowIndex) {
+                    return true;
+                }
+                if (prevColumnIndex - 1 === columnIndex && rowIndex === prevRowIndex && targetSquare === null) {
+                    return true;
+                }
+                if (prevColumnIndex - 1 === columnIndex && prevRowIndex - 1 === rowIndex && targetSquare !== null) {
+                    return true;
+                }
+                if (prevColumnIndex - 1 === columnIndex && prevRowIndex + 1 === rowIndex && targetSquare !== null) {
+                    return true;
+                }
+            } else {
+                if (prevColumnIndex === 1 && columnIndex === 3 && rowIndex === prevRowIndex) {
+                    return true;
+                }
+                if (prevColumnIndex + 1 === columnIndex && rowIndex === prevRowIndex && targetSquare === null) {
+                    return true;
+                }
+                if (prevColumnIndex + 1 === columnIndex && prevRowIndex - 1 === rowIndex && targetSquare !== null) {
+                    return true;
+                }
+                if (prevColumnIndex + 1 === columnIndex && prevRowIndex + 1 === rowIndex && targetSquare !== null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+                    
+
+
+        }
+    
+
     const handleSquareClick = (rowIndex: number, columnIndex: number) => {
-        if (selectedPiece) {
+        if (selectedPiece && isLegalMove(selectedPiece, rowIndex, columnIndex)) {
 
             const newBoard = board.map(row => row.slice());
 
@@ -32,10 +115,10 @@ const Chessboard: React.FC = () => {
                 newBoard[prevPosition.columnIndex][prevPosition.rowIndex] = null;
             }
 
+
+
             setBoard(newBoard);
-
             setSelectedPiece(null);
-
             setPrevPosition(null);
         } 
         else {
