@@ -86,3 +86,44 @@
 }
 
 */
+
+/* ChessBoard.css */
+.chessboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+  }
+
+/* Container for the entire chessboard */
+.chessboard {
+    display: flex;
+    flex-direction: column;
+    width: 400px; /* Adjust width as needed */
+    height: 400px; /* Adjust height as needed */
+    border: 2px solid #333;
+  }
+  
+  /* Container for each row in the chessboard */
+  .chessboard-row {
+    display: flex;
+    flex: 1; /* Each row will take equal space */
+  }
+  
+  /* Style for each cell */
+  .chessboard-row div {
+    width: 100%; /* Each cell takes equal width */
+    flex: 1; /* Each cell takes equal space */
+    aspect-ratio: 1; /* Ensures cells are square */
+  }
+  
+  /* White cells */
+  .white-cell {
+    background-color: #f0d9b5;
+  }
+  
+  /* Black cells */
+  .black-cell {
+    background-color: #b58863;
+  }
+  
