@@ -6,12 +6,9 @@ import Chessboard from './Chessboard';
 
 function App() {
   return (
-    <div className="chessboard-container">
 
-
-      <Chessboard />
-
-    </div>
+    <Chessboard />
+  
   );
 }
 
