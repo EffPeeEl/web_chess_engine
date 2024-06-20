@@ -26,6 +26,13 @@ const Chessboard: React.FC = () => {
     const [prevPosition, setPrevPosition] = useState<{ rowIndex: number, columnIndex: number } | null>(null);
     const [moves, setMoves] = useState<Move[]>([]);
 
+
+    const collisionDetection = (board : (string | null)[][], move:Move) => {
+        //TODO
+        
+
+    }
+
     const isLegalMove = (piece: string, rowIndex: number, columnIndex: number) => {
         const targetSquare = board[columnIndex][rowIndex];
         
