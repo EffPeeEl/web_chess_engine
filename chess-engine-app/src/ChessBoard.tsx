@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import './Chessboard.css';
 
+interface Move {
+    from: string,
+    to: string,
+    piece: string
+    isEnPassantable?: boolean
+}
+
 const Chessboard: React.FC = () => {
     const initialBoardSetup: (string | null)[][] = [
         //this is inverted, you can think of each array as a chessboard column (A->H)
@@ -15,14 +22,12 @@ const Chessboard: React.FC = () => {
     ];
 
     const [board, setBoard] = useState(initialBoardSetup);
-    
     const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
-  
-
     const [prevPosition, setPrevPosition] = useState<{ rowIndex: number, columnIndex: number } | null>(null);
+    const [moves, setMoves] = useState<Move[]>([]);
 
     const isLegalMove = (piece: string, rowIndex: number, columnIndex: number) => {
-        const targetSquare = board[columnIndex][rowIndex]
+        const targetSquare = board[columnIndex][rowIndex];
         
         //check if same color
         if (targetSquare != null && targetSquare[0] === piece[0]) 
@@ -33,9 +38,7 @@ const Chessboard: React.FC = () => {
         const rowDiff = Math.abs(prevRowIndex - rowIndex);
         const colDiff = Math.abs(prevColumnIndex - columnIndex);
         
-        
         if (piece[1] === 'k') {
-    
             if (rowDiff <= 1 && colDiff <= 1) {
                 return true;
             }
@@ -47,8 +50,8 @@ const Chessboard: React.FC = () => {
             if (rowDiff === colDiff || rowDiff === 0 || colDiff === 0) {
                 return true;
             }
-            
         }
+        
         //Bishop
         if (piece[1] === 'b') {
             if (rowDiff === colDiff) {
@@ -62,58 +65,72 @@ const Chessboard: React.FC = () => {
                 return true;
             }
         }
+
         //Knight
         if (piece[1] === 'n') {
             if ((rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2)) {
                 return true;
             }
         }
+
         //Pawn
         if (piece[1] === 'p') {
-            if (piece[0] === 'w') {
-
-
-                //Standard move 2 squares forward
-                if (prevRowIndex === 6 && rowIndex === 4 && colDiff === 0 && targetSquare === null) {
-                    return true;
-                }
-                
-                
+            const direction = piece[0] === 'w' ? -1 : 1;
+            
+            //Standard move 2 squares forward
+            if (((prevRowIndex === 6 && rowIndex === 4) || (prevRowIndex === 1 && rowIndex === 3))  
+                && colDiff === 0 && targetSquare === null) {
+                return true;
             }
-            else
-            {
-                //Standard move 2 squares forward
-                if (prevRowIndex === 1 && rowIndex === 3 && colDiff === 0 && targetSquare === null) {
+            if(rowIndex === prevRowIndex + direction  && colDiff === 0 && targetSquare === null) {
+                return true;
+            }
+            //Capture
+            if (rowIndex === prevRowIndex + direction && colDiff === 1 && targetSquare != null && targetSquare[0] !== piece[0]) {
+                return true;
+            }
+            //En passant ---NOT WORKING
+            if (rowDiff === 1 && colDiff === 1 && targetSquare === null) {
+                const lastMove = moves[moves.length - 1];
+                if (lastMove.piece[1] === 'p' &&  translateMove(lastMove.to).rowIndex === prevRowIndex && translateMove(lastMove.to).columnIndex === columnIndex){
+                    
                     return true;
                 }
             }
         }
 
         return false;
-                    
+    }
 
-
-        }
-    
+    const translateMove = (move: string) => {
+        return {
+            rowIndex: 8 - parseInt(move[1]),
+            columnIndex: move.charCodeAt(0) - 97
+        };
+    }
 
     const handleSquareClick = (rowIndex: number, columnIndex: number) => {
         if (selectedPiece && isLegalMove(selectedPiece, rowIndex, columnIndex)) {
-
             const newBoard = board.map(row => row.slice());
 
             newBoard[columnIndex][rowIndex] = selectedPiece;
 
             if (prevPosition) {
                 newBoard[prevPosition.columnIndex][prevPosition.rowIndex] = null;
+                
+                // Add the move to the moves array
+                const move: Move = {
+                    from: `${String.fromCharCode(97 + prevPosition.columnIndex)}${8 - prevPosition.rowIndex}`,
+                    to: `${String.fromCharCode(97 + columnIndex)}${8 - rowIndex}`,
+                    piece: selectedPiece
+                };
+                setMoves([...moves, move]);
             }
-
-
 
             setBoard(newBoard);
             setSelectedPiece(null);
             setPrevPosition(null);
-        } 
-        else {
+        } else {
             if (board[columnIndex][rowIndex]) {
                 setSelectedPiece(board[columnIndex][rowIndex]);
                 setPrevPosition({ rowIndex, columnIndex });
@@ -141,6 +158,16 @@ const Chessboard: React.FC = () => {
                         })}
                     </div>
                 ))}
+            </div>
+            <div className="moves-list">
+                <h3>Moves</h3>
+                <ul>
+                    {moves.map((move, index) => (
+                        <li key={index}>
+                            {move.piece} from {move.from} to {move.to}
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
