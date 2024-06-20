@@ -32,6 +32,8 @@ const Chessboard: React.FC = () => {
         const prevColumnIndex = prevPosition!.columnIndex;
         const rowDiff = Math.abs(prevRowIndex - rowIndex);
         const colDiff = Math.abs(prevColumnIndex - columnIndex);
+        
+        
         if (piece[1] === 'k') {
     
             if (rowDiff <= 1 && colDiff <= 1) {
@@ -69,29 +71,19 @@ const Chessboard: React.FC = () => {
         //Pawn
         if (piece[1] === 'p') {
             if (piece[0] === 'w') {
-                if (prevColumnIndex === 6 && columnIndex === 4 && rowIndex === prevRowIndex) {
+
+
+                //Standard move 2 squares forward
+                if (prevRowIndex === 6 && rowIndex === 4 && colDiff === 0 && targetSquare === null) {
                     return true;
                 }
-                if (prevColumnIndex - 1 === columnIndex && rowIndex === prevRowIndex && targetSquare === null) {
-                    return true;
-                }
-                if (prevColumnIndex - 1 === columnIndex && prevRowIndex - 1 === rowIndex && targetSquare !== null) {
-                    return true;
-                }
-                if (prevColumnIndex - 1 === columnIndex && prevRowIndex + 1 === rowIndex && targetSquare !== null) {
-                    return true;
-                }
-            } else {
-                if (prevColumnIndex === 1 && columnIndex === 3 && rowIndex === prevRowIndex) {
-                    return true;
-                }
-                if (prevColumnIndex + 1 === columnIndex && rowIndex === prevRowIndex && targetSquare === null) {
-                    return true;
-                }
-                if (prevColumnIndex + 1 === columnIndex && prevRowIndex - 1 === rowIndex && targetSquare !== null) {
-                    return true;
-                }
-                if (prevColumnIndex + 1 === columnIndex && prevRowIndex + 1 === rowIndex && targetSquare !== null) {
+                
+                
+            }
+            else
+            {
+                //Standard move 2 squares forward
+                if (prevRowIndex === 1 && rowIndex === 3 && colDiff === 0 && targetSquare === null) {
                     return true;
                 }
             }
