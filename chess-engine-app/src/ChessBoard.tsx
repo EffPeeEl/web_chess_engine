@@ -42,20 +42,61 @@ const Chessboard: React.FC = () => {
 
         const prevRowIndex = prevPosition!.rowIndex;
         const prevColumnIndex = prevPosition!.columnIndex;
-        const rowDiff = Math.abs(prevRowIndex - rowIndex);
-        const colDiff = Math.abs(prevColumnIndex - columnIndex);
+        const rowDiff : number = Math.abs(prevRowIndex - rowIndex);
+        const colDiff : number  = Math.abs(prevColumnIndex - columnIndex);
+        
+
+        const realRowDiff = prevRowIndex - rowIndex;
+        const realColDiff = prevColumnIndex - columnIndex;
+        const rowDirection :number  = realRowDiff > 0 ? 1 : -1;
+        const columnDirection : number = realColDiff > 0 ? 1 : -1;
+
+
         
         if (piece[1] === 'k') {
             if (rowDiff <= 1 && colDiff <= 1) {
+                // no need for collision check since collision with target is already checked for
                 return true;
             }
             return false;
         }
         
+        let collision : boolean = false;
+
         //Queen
         if (piece[1] === 'q') {
+            
+            if(rowDiff === 0) {
+                for(let i = 0;  i < rowDiff; i++) {
+                    if(board[rowIndex + i*rowDirection][columnIndex]?.charAt(0)=== piece[0]) {
+                        
+                        return false;
+                    }
+                 
+
+                }
+            }
+
+            if(colDiff === 0) {
+                for(let i = 0;  i < rowDiff; i++) {
+                    if(board[columnIndex][rowIndex + (i*rowDirection)]?.charAt(0)=== piece[0]) {
+                        
+                        return false;
+                    }
+                    //console.log(rowIndex + i*rowDirection)
+                    console.log(board[columnIndex][rowIndex + (i*rowDirection)])
+                    console.log("row: " +(rowIndex + (i*rowDirection) ))
+                    console.log("row: " + rowIndex)
+                    console.log("i: " + i)
+                    console.log("dir: " + rowDirection)
+                }
+            }
+            
             if (rowDiff === colDiff || rowDiff === 0 || colDiff === 0) {
-                return true;
+                
+             
+
+                    return true;
             }
         }
         
