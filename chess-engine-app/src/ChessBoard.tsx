@@ -67,12 +67,13 @@ const Chessboard: React.FC = () => {
         if (piece[1] === 'q') {
             
             if(rowDiff === 0) {
-                for(let i = 0;  i < rowDiff; i++) {
-                    if(board[rowIndex + i*rowDirection][columnIndex]?.charAt(0)=== piece[0]) {
+                for(let i = 0;  i < colDiff; i++) {
+    
+                    if(board[columnIndex + (i * columnDirection)][rowIndex]?.charAt(0)=== piece[0]) {
                         
                         return false;
                     }
-                 
+                
 
                 }
             }
